@@ -1,0 +1,82 @@
+# Minimum Genetic Mutation
+# Link: https://leetcode.com/problems/minimum-genetic-mutation/description/ 
+# BFS, string manipulation
+
+from queue import Queue
+class Solution:
+    def __init__(self, bank):
+        self.mut_queue = Queue()
+        self.visited = list()
+        self.mutationTree = dict()
+        self.bank = bank
+    
+    def getChildren(self, root: str) -> list:
+        bases = ["A","C","G","T"]
+        mutations = []
+        for i,letter in enumerate(root):
+            for base in bases:
+                if(letter != base):
+                    mutation = root[:i] + base + root[i+1:]
+                    if(mutation in self.bank and self.mutationTree.get(mutation) == None):
+                        mutations.append(mutation)
+        return mutations
+
+    def createMutationTree(self, start: str):
+        children = self.getChildren(start)
+        self.mutationTree[start] = children
+        
+        if(len(children) == 0):
+            return
+        
+        for child in children:
+            self.createMutationTree(child)
+            
+
+    def minMutation(self, start: str, end: str) -> int:
+        if(len(self.bank) == 0):
+            return -1
+
+        self.createMutationTree(start)
+        print(self.mutationTree)
+
+        finished = False
+        path = 0
+
+        self.mut_queue.put(start)
+        self.visited.append(start)
+
+        while finished != True and self.mut_queue.empty() != True:
+            mut = self.mut_queue.get()
+            print("parent")
+            print(mut)
+            if mut == end:
+                finished = True
+                break
+            if len(self.mutationTree[mut]) != 0:
+                path += 1
+            print(self.mutationTree[mut])
+            
+            for neighbor in self.mutationTree[mut]:
+                if(neighbor == end):
+                    finished = True
+                    break 
+                if neighbor not in self.visited:
+                    self.visited.append(neighbor)
+                    self.mut_queue.put(neighbor)
+
+            print(path)
+        if(not finished):
+            return -1
+        return path
+
+def main():
+    startGene = "AAAACCCC"
+    endGene = "CCCCCCCC"
+    bank = ["AAAACCCA","AAACCCCA","AACCCCCA","AACCCCCC","ACCCCCCC","CCCCCCCC","AAACCCCC","AACCCCCC"]
+    sol = Solution(bank)
+    #print(sol.createMutationTree(startGene))
+    print(sol.minMutation(startGene,endGene))
+
+
+if __name__ == "__main__":
+    main()
