@@ -1,0 +1,40 @@
+/**
+ *  Reverse vowels of a string
+ * Link: https://leetcode.com/problems/reverse-vowels-of-a-string/
+ * pointers, array traversal
+ * */
+
+function isVowel(letter) {
+  var vowels = ["a", "e", "i", "o", "u", "A", "E", "I", "O", "U"];
+  return vowels.includes(letter);
+}
+
+function reverseVowels(str) {
+  var str = str.split("");
+  var i = 0;
+  var j = str.length - 1;
+  var temp;
+  while (i < j) {
+    // i is vowel, j is vowel -> switch
+    // i is vowel, j is not vowel -> decrement j til vowel
+    // j is not vowel, i is vowel -> increment i till vowel
+
+    if (isVowel(str[i]) && isVowel(str[j])) {
+      temp = str[i];
+      str[i] = str[j];
+      str[j] = temp;
+      i++;
+      j--;
+    }
+    if (isVowel(str[i]) && !isVowel(str[j])) {
+      j--;
+    }
+    if (!isVowel(str[i]) && isVowel(str[j])) {
+      i++;
+    }
+  }
+  return str.join("");
+}
+
+var str = "leetcode";
+console.log(reverseVowels(str));
